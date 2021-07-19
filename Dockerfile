@@ -15,8 +15,8 @@ RUN curl https://install.meteor.com/ |sed 's/2.3.2/2.2/'| sh
 COPY . /usr/src/app/.
 WORKDIR /usr/src/app/
 
-
 RUN meteor npm install
+
 RUN meteor build --server-only --directory $DEPLOY_DIR
 
 FROM node:12.22.1-buster-slim
