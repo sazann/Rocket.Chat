@@ -67,4 +67,5 @@ ENV DEPLOY_METHOD=docker \
     Accounts_AvatarStorePath=/app/uploads
 
 EXPOSE 3000
+
 CMD ["node", "main.js"]
