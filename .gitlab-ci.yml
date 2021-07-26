@@ -21,7 +21,7 @@ build-job:
     - docker rmi rocket-chat:$CI_PIPELINE_IID
     #- docker run --name rocketchat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local -d $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     #- docker build -t $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest .
-    - sleep 60
+    #- sleep 60
     #- docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     #- docker login -u testuser -p testpassword 20.55.33.255:5000
     #- docker build -t rocket.chat:$CI_PIPELINE_IID .
