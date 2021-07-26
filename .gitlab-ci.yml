@@ -1,12 +1,29 @@
-always-run:
-  script: echo 'this should always run'
+services:
+  - docker:19.03.12-dind
+  - name: docker:19.03.12-dind
+    #command: ["/bin/sh", "-c", "[[ -z $CERTIFICATE_URL ]] && ( echo Injecting no certificate && dockerd-entrypoint.sh || exit ) || ( echo Injecting certificate $CERTIFICATE_URL && wget $CERTIFICATE_URL -O /usr/local/share/ca-certificates/cert.crt && update-ca-certificates && dockerd-entrypoint.sh || exit )"]
+stages:         
+  - build
 
-on-pull-requests:
-  script: echo 'this should run on pull requests'
-  only:
-    - external_pull_requests
-
-except-pull-requests:
-  script: echo 'this should not run on pull requests'
-  except:
-    - external_pull_requests
+build-job:       
+  tags:
+    - docker
+  stage: build
+  script:
+    #- docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    #- docker build -t rocket-chat:$CI_PIPELINE_IID .
+    #- docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    #- docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    #- docker build -t registry.gitlab.com/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID .
+    #- docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+   # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+   # - docker rmi rocket-chat:$CI_PIPELINE_IID
+    #- docker run --name rocketchat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local -d $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    #- docker build -t $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest .
+    - sleep 60
+    #- docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    #- docker login -u testuser -p testpassword 20.55.33.255:5000
+    #- docker build -t rocket.chat:$CI_PIPELINE_IID .
+    #- docker tag rocket.chat:$CI_PIPELINE_IID 20.55.33.255:5000/rocket.chat/rocket.chat:$CI_PIPELINE_IID
+    #- docker push  20.55.33.255:5000/rocket.chat/rocket.chat:$CI_PIPELINE_IID
