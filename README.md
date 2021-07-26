@@ -14,7 +14,7 @@ Using our self-managed offerings you can deploy Rocket.Chat on your own server, 
 <img src="https://github.com/RocketChat/Rocket.Chat.Artwork/blob/master/Product%20Images/Welcome%20to%20RC%20(Readme).jpg" data-canonical-src="https://github.com/RocketChat/Rocket.Chat.Artwork/blob/master/Product%20Images/Welcome%20to%20RC%20(Readme).jpg" width="919" height="511" />
 
 
-## Cloud Hosted Rocket.Chat
+### Cloud Hosted Rocket.Chat
 
 https://cloud.rocket.chat/trial
 
