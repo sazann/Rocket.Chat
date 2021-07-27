@@ -11,23 +11,23 @@ build-job:
   stage: build
   script:
     #---work
-    # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    # - docker build -t rocket-chat:$CI_PIPELINE_IID .
-    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    # - docker rmi rocket-chat:$CI_PIPELINE_IID
-
-    #---test
-
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -f DockerfileHELLO -t rocket-chat:$CI_PIPELINE_IID .
+    - docker build -t rocket-chat:$CI_PIPELINE_IID .
     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     - docker rmi rocket-chat:$CI_PIPELINE_IID
+
+    #---test
+
+    # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # - docker build -f DockerfileHELLO -t rocket-chat:$CI_PIPELINE_IID .
+    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    # - docker rmi rocket-chat:$CI_PIPELINE_IID
 
     #- docker build -t registry.gitlab.com/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID .
     #- docker run --name rocketchat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local -d $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
