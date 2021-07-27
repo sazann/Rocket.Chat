@@ -28,3 +28,4 @@ build-job:
     #- docker tag rocket.chat:$CI_PIPELINE_IID 20.55.33.255:5000/rocket.chat/rocket.chat:$CI_PIPELINE_IID
     #- docker push  20.55.33.255:5000/rocket.chat/rocket.chat:$CI_PIPELINE_IID
     
+    
