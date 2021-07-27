@@ -1628,5 +1628,7 @@ metrics:
     ##       severity: page
     ##     annotations:
     ##       summary: High request latency
-    ####
+    ##
+    ##----
+
     rules: {}
