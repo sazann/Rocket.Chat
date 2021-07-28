@@ -29,6 +29,7 @@ test:
   script:
       - docker run -it --name one nginx
       - docker run -it --name two nginx
+      - sleep 300
     # - docker run -it --name db -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
     # - docker exec -i db mongo --eval "printjson(rs.initiate())"
     # - sleep 300
