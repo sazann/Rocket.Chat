@@ -29,7 +29,7 @@ test:
   script:
     - docker run -it --name db -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
     - sleep 10
-    - docker exec -it db mongo --eval "printjson(rs.initiate())"
+    - docker exec -i db mongo --eval "printjson(rs.initiate())"
     - sleep 300
     - docker run -it --name chat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     - sleep 600
