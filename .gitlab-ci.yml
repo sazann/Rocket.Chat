@@ -10,7 +10,7 @@ build:
  #   - docker:19.03.12-dind
   stage: build
   script:
-    - docker run hello-world
+    - docker -v
     # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     # - docker build -f DockerfileHELLO -t rocket-chat:$CI_PIPELINE_IID .
     # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
@@ -24,6 +24,7 @@ test:
     - host
   stage: test
   script:
+    - docker run hello-world
     - docker ps -a
     
 
