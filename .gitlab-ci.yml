@@ -19,10 +19,10 @@ stages:
 #     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
 #     - docker rmi rocket-chat:$CI_PIPELINE_IID
 
-test:
+ test:
   tags:
     - host
-   script:
+  script:
     - docker -v
   
 
