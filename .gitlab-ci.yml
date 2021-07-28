@@ -1,7 +1,7 @@
 stages:
   - build
   - test
-  - deployk8s
+  #- deployk8s
 
 build:
   tags:
@@ -10,20 +10,21 @@ build:
  #   - docker:19.03.12-dind
   stage: build
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -f DockerfileHELLO -t rocket-chat:$CI_PIPELINE_IID .
-    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    - docker rmi rocket-chat:$CI_PIPELINE_IID
+    - docker run hello-world
+    # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # - docker build -f DockerfileHELLO -t rocket-chat:$CI_PIPELINE_IID .
+    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    # - docker rmi rocket-chat:$CI_PIPELINE_IID
 
 test:
   tags:
     - host
   stage: test
   script:
-    - docker -v
+    - docker ps -a
     
 
 # example of applying terraform template
