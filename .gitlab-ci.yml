@@ -5,9 +5,9 @@ stages:
 
 build:
   tags:
-    - docker
-  services:
-    - docker:19.03.12-dind
+    - host
+ # services:
+ #   - docker:19.03.12-dind
   stage: build
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
