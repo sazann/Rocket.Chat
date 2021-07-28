@@ -31,17 +31,13 @@ test:
      - docker run -it --name db --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
      - sleep 100
      - docker exec -i db mongo --eval "printjson(rs.initiate())" 
-     - docker exec -i db mongo --eval "printjson(rs.initiate({
-              _id: 'rs0',
-              members: [ { _id: 0, host: 'localhost:27017' } ]})
+     - docker exec -i db mongo --eval "printjson(rs.initiate({\
+     _id: 'rs0', members: [ { _id: 0, host: 'localhost:27017' } ]})
      - docker exec -i db mongo --eval "printjson(rs.reconfig(config))"
-     - docker exec -i db mongo --eval "printjson(rs.initiate({
-              _id: 'rs1',
-              members: [ { _id: 1, host: 'localhost:27017' } ]}) 
-     - docker exec -i db mongo --eval "printjson(rs.initiate({
-              _id: 'rs2',
-              members: [ { _id: 2, host: 'localhost:27017' } ]})
-
+     - docker exec -i db mongo --eval "printjson(rs.initiate({\
+     _id: 'rs1', members: [ { _id: 1, host: 'localhost:27017' } ]}) 
+     - docker exec -i db mongo --eval "printjson(rs.initiate({\
+     _id: 'rs2', members: [ { _id: 2, host: 'localhost:27017' } ]})
      - docker run -i --name chat --net chat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     # - sleep 600
 
