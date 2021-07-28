@@ -27,6 +27,8 @@ test:
     - host
   stage: test
     script:
+      - docker run -i --name chat --net chat -p 80:3000 --link mongo --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://mongo:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+
       # - docker network create chat || true
       # - docker run -it --name mongo --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
       # - sleep 30
@@ -40,7 +42,7 @@ test:
      #_id: 'rs1', members: [ { _id: 1, host: 'localhost:27017' } ]}) 
     # - docker exec -i db mongo --eval "printjson(rs.initiate({\
      #_id: 'rs2', members: [ { _id: 2, host: 'localhost:27017' } ]})
-     - docker run -i --name chat --net chat -p 80:3000 --link mongo --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://mongo:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    #- docker run -i --name chat --net chat -p 80:3000 --link mongo --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://mongo:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     # - sleep 600
 
    # example of applying terraform template
