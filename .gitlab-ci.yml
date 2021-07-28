@@ -26,15 +26,11 @@ test:
   tags:
     - host
   stage: test
-  script:
-  script:
-     - docker network create chat || true
-     - docker run -it --name mongo --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
-     - sleep 30
-     - docker exec -i mongo mongo --eval "printjson(rs.initiate())" 
-    #  - docker exec -i mongo mongo --eval "printjson(rs.initiate({
-		# _id: 'rs0',
-		# members: [ { _id: 0, host: 'localhost:27017' } ]}))"
+    script:
+      - docker network create chat || true
+      - docker run -it --name mongo --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
+      - sleep 30
+      - docker exec -i mongo mongo --eval "printjson(rs.initiate())" 
     #  - docker exec -i mongo mongo --eval "printjson(config.members[0].host="mongo:27017")"
     #  - docker exec -i mongo mongo --eval "printjson(rs.reconfig(config))"
     #  - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-1:27017"))
