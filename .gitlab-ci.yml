@@ -32,7 +32,9 @@ test:
      - docker run -it --name mongo --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
      - sleep 100
      - docker exec -i mongo mongo --eval "printjson(rs.initiate())" 
-     - docker exec -i mongo mongo --eval "printjson(var config = rs.conf() && config.members[0].host="mongo:27017" && rs.reconfig(config))
+     - docker exec -i mongo mongo --eval "printjson(var config = rs.conf())"
+     - docker exec -i mongo mongo --eval "printjson(config.members[0].host="mongo:27017")"
+     - docker exec -i mongo mongo --eval "printjson(rs.reconfig(config))"
      - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-1:27017"))
      - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-2:27017"))
      
