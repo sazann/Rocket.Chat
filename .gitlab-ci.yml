@@ -1,5 +1,5 @@
-# variables:
-#     DOCKER_HOST: "tcp://192.168.100.77:2375"
+variables:
+     DOCKER_HOST: "tcp://172.18.0.1:2375"
 #     #DOCKER_HOST: tcp://docker:2375/
 #     DOCKER_DRIVER: overlay2    
 #     DOCKER_TLS_CERTDIR: ""
