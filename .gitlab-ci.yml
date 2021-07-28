@@ -1,15 +1,66 @@
-services:
-  - docker:19.03.12-dind
-  - name: docker:19.03.12-dind
+#services:
+#  - docker:19.03.12-dind
+#  - name: docker:19.03.12-dind
     #command: ["/bin/sh", "-c", "[[ -z $CERTIFICATE_URL ]] && ( echo Injecting no certificate && dockerd-entrypoint.sh || exit ) || ( echo Injecting certificate $CERTIFICATE_URL && wget $CERTIFICATE_URL -O /usr/local/share/ca-certificates/cert.crt && update-ca-certificates && dockerd-entrypoint.sh || exit )"]
-stages:         
+stages:
   - build
+  - test
+  - deployk8s
 
-build-job:       
+build:
   tags:
     - docker
+  image: docker:19.03.12-dind
   stage: build
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t rocket-chat:$CI_PIPELINE_IID .
+    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    - docker rmi rocket-chat:$CI_PIPELINE_IID
+
+test:
+  tags:
+    - docker
+  image: ubuntu:18.04
+  stage: test
+  script:
+    - docker run --name db -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
+    - sleep 10
+    - docker exec -i db mongo --eval "printjson(rs.initiate())"
+    - docker run --name rocketchat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    - sleep 600
+
+# example of applying terraform template
+# deployterraform:
+#   image: hashicorp/terraform/ # or another arbitrary docker image
+#   stage: deployterraform
+#   script:
+#     - hashicorp/terraform:full apply main.tf # or another arbitrary command
+
+# example of deploying to S3
+# deploytos3:
+#   image: mikesir87/aws-cli # or another arbitrary docker image
+#   stage: deploytos3
+#   script:
+#     - aws s3 sync . s3://example.com/ --delete # or another arbitrary command
+
+# example of deploying to Elastic Beanstalk
+# deploytoelasticbeanstalk:
+#   image: lciel/eb-cli # or another arbitrary docker image
+#   stage: deploytoelasticbeanstalk
+#   script:
+#     - eb deploy # or another arbitrary command
+# stages:
+#   - build
+
+# build-job:
+#   tags:
+#     - docker
+#   stage: build
+#   script:
     #---work
     # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     # - docker build -t rocket-chat:$CI_PIPELINE_IID .
@@ -20,8 +71,8 @@ build-job:
     # - docker rmi rocket-chat:$CI_PIPELINE_IID
 
     #--- test deploy job
-    - docker run --name db -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
-    - sleep 10
-    - docker exec -i db mongo --eval "printjson(rs.initiate())"
-    - docker run --name rocketchat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    - sleep 600
+    # - docker run --name db -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
+    # - sleep 10
+    # - docker exec -i db mongo --eval "printjson(rs.initiate())"
+    # - docker run --name rocketchat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    # - sleep 600
