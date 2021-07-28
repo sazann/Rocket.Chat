@@ -25,7 +25,9 @@ build:
 test:
   tags:
     - docker
-  image: yobasystems/alpine-docker
+  #image: yobasystems/alpine-docker
+  services:
+    - yobasystems/alpine-docker
   stage: test
   script:
     - docker run --name db -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
