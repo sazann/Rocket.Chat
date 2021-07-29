@@ -1,25 +1,25 @@
 variables:
   DOCKER_HOST: "tcp://172.17.0.1:2375"
 stages:
-  #- build
+  - build
   - test_deploy
   - test_html
   #- deployk8s
 
-# build:
-#   tags:
-#     - host
-#   services:
-#     - docker:19.03.12-dind
-#   stage: build
-#   script:
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#     - docker build -t rocket-chat:$CI_PIPELINE_IID .
-#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-#     - docker rmi rocket-chat:$CI_PIPELINE_IID
+build:
+  tags:
+    - host
+  services:
+    - docker:19.03.12-dind
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t rocket-chat:$CI_PIPELINE_IID .
+    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    - docker rmi rocket-chat:$CI_PIPELINE_IID
 
 test:       
   tags:
@@ -42,7 +42,7 @@ test_html:
     - sleep 15
     - apk add curl
     - sleep 30
-    - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed!"; else echo "Error!"; exit 1; fi;
+    - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed successfully!"; else echo "Error!"; exit 1; fi;
     - docker stop rocketchat
     - docker stop mongo
 
