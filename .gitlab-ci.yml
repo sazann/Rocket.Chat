@@ -42,7 +42,7 @@ test_html:
   script:
     - sleep 10
    # - apt update
-    - apk add python
+    - apk add curl
     - curl -s -o /dev/null -w "%{http_code}" https://localhost:3000
 
 
