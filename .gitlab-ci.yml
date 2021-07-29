@@ -41,7 +41,9 @@ test_html:
 
   script:
     - sleep 10
+    - apt update
+    - apt install curl -y
     - curl -s -o /dev/null -w "%{http_code}" https://localhost:3000
 
-    
+
 
