@@ -8,7 +8,7 @@ stages:
 
 build:
   tags:
-    - host
+    - docker
   services:
     - docker:19.03.12-dind
   stage: build
