@@ -12,8 +12,8 @@ stages:
  #   - docker:19.03.12-dind
   # stage: build
   # script:
-  #   - docker -v
-  #   - docker run hello-world
+    # - docker -v
+    # - docker run hello-world
     # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     # - docker build -f DockerfileHELLO -t rocket-chat:$CI_PIPELINE_IID .
     # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
@@ -27,44 +27,18 @@ test:
     - host
   stage: test
     script:
-      - docker run -i --name chat --net chat -p 80:3000 --link mongo --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://mongo:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+      - docker network create chat || true
+      - docker run -i --name chat --net chat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+      
+    # - docker run -it --name mongo --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
+    # - sleep 30
+    # - docker exec -i mongo mongo --eval "printjson(rs.initiate())" 
+    # - docker exec -i mongo mongo --eval "printjson(config.members[0].host="mongo:27017")"
+    # - docker exec -i mongo mongo --eval "printjson(rs.reconfig(config))"
+    # - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-1:27017"))
+    # - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-2:27017"))
+ 
 
-      # - docker network create chat || true
-      # - docker run -it --name mongo --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
-      # - sleep 30
-      # - docker exec -i mongo mongo --eval "printjson(rs.initiate())" 
-    #  - docker exec -i mongo mongo --eval "printjson(config.members[0].host="mongo:27017")"
-    #  - docker exec -i mongo mongo --eval "printjson(rs.reconfig(config))"
-    #  - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-1:27017"))
-    #  - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-2:27017"))
-     
-     #- docker exec -i db mongo --eval "printjson(rs.initiate({\
-     #_id: 'rs1', members: [ { _id: 1, host: 'localhost:27017' } ]}) 
-    # - docker exec -i db mongo --eval "printjson(rs.initiate({\
-     #_id: 'rs2', members: [ { _id: 2, host: 'localhost:27017' } ]})
-    #- docker run -i --name chat --net chat -p 80:3000 --link mongo --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://mongo:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    # - sleep 600
-
-   # example of applying terraform template
-# deployterraform:
-#   image: hashicorp/terraform/ # or another arbitrary docker image
-#   stage: deployterraform
-#   script:
-#     - hashicorp/terraform:full apply main.tf # or another arbitrary command
-
-# example of deploying to S3
-# deploytos3:
-#   image: mikesir87/aws-cli # or another arbitrary docker image
-#   stage: deploytos3
-#   script:
-#     - aws s3 sync . s3://example.com/ --delete # or another arbitrary command
-
-# example of deploying to Elastic Beanstalk
-# deploytoelasticbeanstalk:
-#   image: lciel/eb-cli # or another arbitrary docker image
-#   stage: deploytoelasticbeanstalk
-#   script:
-#     - eb deploy # or another arbitrary command
 # stages:
 #   - build
 
