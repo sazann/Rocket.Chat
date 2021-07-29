@@ -2,7 +2,8 @@ variables:
   DOCKER_HOST: "tcp://172.17.0.1:2375"
 stages:
   #- build
-  - test
+  - test_deploy
+  - test_html
   #- deployk8s
 
 # build:
@@ -22,7 +23,7 @@ stages:
 test:       
   tags:
     - host
-  stage: test
+  stage: test_deploy
 
   script:    
     - docker network create chat || true
@@ -33,43 +34,14 @@ test:
     - docker exec -i mongo mongo rsinitiate.js
     - docker run --rm -d -p3000:3000 -e MONGO_OPLOG_URL=mongodb://mongo:27017/local -e MONGO_URL=mongodb://mongo:27017/rocketchat --net chat --name rocketchat registry.gitlab.com/andrew-novogrodski/rocket-chat:latest 
 
-# test:
-#   tags:
-#     - host
-#   stage: test
-#   script:
-#     - docker network create chat || true
-#     - docker run -i --name chat --net chat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-      
-    # - docker run -it --name mongo --net chat -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
-    # - sleep 30
-    # - docker exec -i mongo mongo --eval "printjson(rs.initiate())" 
-    # - docker exec -i mongo mongo --eval "printjson(config.members[0].host="mongo:27017")"
-    # - docker exec -i mongo mongo --eval "printjson(rs.reconfig(config))"
-    # - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-1:27017"))
-    # - docker exec -i mongo mongo --eval "printjson(rs.add("mongo-2:27017"))
- 
+test_html:       
+  tags:
+    - host
+  stage: test_html
 
-# stages:
-#   - build
+  script:
+    - sleep 10
+    - curl -s -o /dev/null -w "%{http_code}" https://localhost:3000
 
-# build-job:
-#   tags:
-#     - docker
-#   stage: build
-#   script:
-    #---work
-    # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    # - docker build -t rocket-chat:$CI_PIPELINE_IID .
-    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    # - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    # - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    # - docker rmi rocket-chat:$CI_PIPELINE_IID
+    
 
-    #--- test deploy job
-    # - docker run --name db -d mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
-    # - sleep 10
-    # - docker exec -i db mongo --eval "printjson(rs.initiate())"
-    # - docker run --name rocketchat -p 80:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/local $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    # - sleep 600
