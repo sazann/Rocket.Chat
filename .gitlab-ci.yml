@@ -43,6 +43,7 @@ test_html:
     - sleep 15
    # - apt update
     - apk add curl
+    - sleep 300
     - curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000
 
 
