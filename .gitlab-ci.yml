@@ -42,7 +42,7 @@ test_html:
     - sleep 15
     - apk add curl
     - sleep 30
-    - curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000
+    - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed!"; else echo "Error!"; exit 1; fi;
     - docker stop rocketchat
     - docker stop mongo
 
