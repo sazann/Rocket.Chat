@@ -6,9 +6,6 @@ stages:
   - test_html
   #- deployk8s
 
-before-script:
-  - apk add python python-dev python pip
-
 # build:
 #   tags:
 #     - host
@@ -45,7 +42,7 @@ test_html:
   script:
     - sleep 10
    # - apt update
-   # - apk add curl -y
+    - apk add python
     - curl -s -o /dev/null -w "%{http_code}" https://localhost:3000
 
 
