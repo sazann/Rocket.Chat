@@ -1,24 +1,37 @@
 variables:
   DOCKER_HOST: "tcp://172.17.0.1:2375"
 stages:
-  - build
-  #- test
+  #- build
+  - test
   #- deployk8s
 
-build:
+# build:
+#   tags:
+#     - host
+#   services:
+#     - docker:19.03.12-dind
+#   stage: build
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - docker build -t rocket-chat:$CI_PIPELINE_IID .
+#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+#     - docker rmi rocket-chat:$CI_PIPELINE_IID
+test:       
   tags:
     - host
-  services:
-    - docker:19.03.12-dind
-  stage: build
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t rocket-chat:$CI_PIPELINE_IID .
-    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    - docker rmi rocket-chat:$CI_PIPELINE_IID
+  stage: test
+
+  script:    
+    - docker network create chat || true
+    - docker run --rm -d --net chat --name mongo mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
+    - sleep 10
+    - echo "Enable DB rs.initiate..."     
+    - docker cp rsinitiate.js mongo:rsinitiate.js
+    - docker exec -i mongo mongo rsinitiate.js
+    - docker run --rm -d -p3000:3000 -e MONGO_OPLOG_URL=mongodb://mongo:27017/local -e MONGO_URL=mongodb://mongo:27017/rocketchat --net chat --name rocketchat registry.gitlab.com/andrew-novogrodski/rocket-chat:latest 
 
 # test:
 #   tags:
