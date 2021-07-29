@@ -20,11 +20,11 @@ stages:
 #     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
 #     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
 #     - docker rmi rocket-chat:$CI_PIPELINE_IID
+
 test:       
   tags:
     - host
   stage: test_deploy
-
   script:    
     - docker network create chat || true
     - docker run --rm -d --net chat --name mongo mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
@@ -38,13 +38,13 @@ test_html:
   tags:
     - host
   stage: test_html
-
   script:
     - sleep 15
-   # - apt update
     - apk add curl
     - sleep 300
     - curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000
+    - docker stop rocketchat
+    - docker stop mongo
 
 
 
