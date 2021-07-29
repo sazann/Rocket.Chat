@@ -1,5 +1,5 @@
-variables:
-  DOCKER_HOST: "tcp://172.17.0.1:2375"
+#variables:
+  #DOCKER_HOST: "tcp://172.17.0.1:2375"
 stages:
   - build
   - test_deploy
@@ -25,6 +25,8 @@ test:
   tags:
     - host
   stage: test_deploy
+  variables:
+    DOCKER_HOST: "tcp://172.17.0.1:2375"
   script:    
     - docker network create chat || true
     - docker run --rm -d --net chat --name mongo mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
@@ -38,6 +40,8 @@ test_html:
   tags:
     - host
   stage: test_html
+  variables:
+    DOCKER_HOST: "tcp://172.17.0.1:2375"
   script:
     - sleep 15
     - apk add curl
