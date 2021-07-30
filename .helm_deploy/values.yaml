@@ -1,4 +1,4 @@
-#namespace for deploy
+##namespace for deploy
 namespace: project
 
 #rocketchat default values 
