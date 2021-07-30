@@ -1,0 +1,29 @@
+#namespace for deploy
+namespace: ann-test
+
+#rocketchat default values 
+app:
+  name: rocketchat
+  containerPort: 3000
+# env:
+  service:
+    name: rocket-service
+    port: 3000
+    targetPort: 3000
+  hpa:
+    minReplicas: 2
+    maxReplicas: 4
+    resource:
+      cpu: 70
+  ingress:
+    name: ingress-resource
+
+#mongodb
+db:
+  name: mongodb
+  port: 27017
+  replicas: 3
+  secretname: mongo  
+#docker images:
+containers:
+  app_image: registry.rocket.chat/rocketchat/rocket.chat:latest

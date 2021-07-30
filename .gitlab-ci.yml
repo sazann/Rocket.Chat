@@ -53,7 +53,7 @@ deployk8s:
     - shell
   stage: deployk8s
   script:
-    - kubectl get all
+    - helm update --install app helm_deploy/
 
 
 # stages:
