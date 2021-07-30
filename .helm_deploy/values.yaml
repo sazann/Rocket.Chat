@@ -1,5 +1,5 @@
 #namespace for deploy
-namespace: ann-test
+namespace: project
 
 #rocketchat default values 
 app:
