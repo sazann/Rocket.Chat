@@ -52,8 +52,21 @@ deployk8s:
   tags:
     - shell
   stage: deployk8s
-  # variables:
-  #   DOCKER_HOST: "tcp://172.17.0.1:2375"
   script:
     - ps
+
+
+# stages:
+#   - test
+
+# format:
+#   stage: test
+#   image: devth/helm:latest
+#   environment: dev
+#   script:
+   
+#     -  helm repo add bitnami https://charts.bitnami.com/bitnami
+#     -  helm repo update
+#     -  helm install mongo-bitnami bitnami/mongodb -f values.yaml
+
 
