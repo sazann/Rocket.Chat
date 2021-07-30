@@ -55,5 +55,5 @@ deployk8s:
   # variables:
   #   DOCKER_HOST: "tcp://172.17.0.1:2375"
   script:
-    - sleep 300
+    - ps
 
