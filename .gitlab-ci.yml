@@ -53,3 +53,4 @@ deployk8s:
   stage: deployk8s
   script:
     - helm upgrade --install rocketchat .helm_deploy
+    
