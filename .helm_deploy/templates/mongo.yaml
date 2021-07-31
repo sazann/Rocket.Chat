@@ -5,7 +5,7 @@ metadata:
   name: {{ .Values.db.name }}
   namespace: {{ .Values.namespace }}
 spec:
-  serviceName: mongodb-headless
+  serviceName: {{ .Values.db.service.name }}
   podManagementPolicy: OrderedReady
   replicas: {{ .Values.db.replicas }}
   updateStrategy:

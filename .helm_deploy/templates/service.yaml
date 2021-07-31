@@ -11,12 +11,11 @@ spec:
     - protocol: TCP
       port: {{ .Values.app.service.port }}
       targetPort: {{ .Values.app.service.targetPort }}
-# type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-headless
+  name: {{ .Values.db.service.name }}
   namespace: {{ .Values.namespace }}
 spec:
   type: ClusterIP
@@ -24,8 +23,8 @@ spec:
   publishNotReadyAddresses: true
   ports:
   - name: {{ .Values.db.name }}
-    port: 27017
-    targetPort: 27017
+    port: {{ .Values.db.service.port }}
+    targetPort: {{ .Values.db.service.targetPort }}
   selector:
     app.kubernetes.io/name: {{ .Values.db.name }}
     app.kubernetes.io/component: {{ .Values.db.name }}

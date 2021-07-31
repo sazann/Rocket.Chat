@@ -1,11 +1,10 @@
-##namespace for deploy
+#namespace for deploy
 namespace: project
 
 #rocketchat default values 
 app:
   name: rocketchat
   containerPort: 3000
-# env:
   service:
     name: rocket-service
     port: 3000
@@ -23,7 +22,18 @@ db:
   name: mongodb
   port: 27017
   replicas: 3
-  secretname: mongo  
+  secretname: mongo
+  service:
+    name: mongodb-headless
+    port: 27017
+    targetPort: 27017
+
+#grafana-for-ingress
+grafana:
+  namespace: monitoring
+  name: grafana-prometheus-jk8gk
+  port: 80
+
 #docker images:
 containers:
   app_image: registry.rocket.chat/rocketchat/rocket.chat:latest

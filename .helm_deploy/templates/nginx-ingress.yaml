@@ -1,3 +1,4 @@
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -22,3 +23,28 @@ spec:
               name: {{ .Values.app.service.name }}
               port:
                 number: {{ .Values.app.service.port }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.app.ingress.name }}-2
+  namespace: {{ .Values.grafana.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+spec:
+  tls:
+  - hosts:
+    - grafana.nasa.net.by
+    secretName: app-tls2
+  rules:
+  - host: "grafana.nasa.net.by"
+    http:
+      paths:
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: {{ .Values.grafana.name }}
+              port:
+                number: {{ .Values.grafana.port }}
