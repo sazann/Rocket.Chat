@@ -2,10 +2,10 @@
 #   DOCKER_HOST: "tcp://172.17.0.1:2375"
 
  stages:
-#   - build
-#   - test_deploy
-#   - test_html
-   - deployk8s
+  # - build
+  # - test_deploy
+  # - test_html
+  - deployk8s
 
 # build:
 #   tags:
@@ -53,4 +53,3 @@ deployk8s:
   stage: deployk8s
   script:
     - helm upgrade --install rocketchat .helm_deploy
-    
