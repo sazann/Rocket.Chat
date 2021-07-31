@@ -22,7 +22,8 @@ build:
     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     - docker rmi $(docker images -f "dangling=true" -q)
     - docker rmi -f rocket-chat:$CI_PIPELINE_IID
-
+    - sleep 10
+  
 test:       
   tags:
     - docker
@@ -53,4 +54,4 @@ deployk8s:
     - shell
   stage: deployk8s
   script:
-    - helm install rocketchat .helm_deploy
+    - helm upgrade --install rocketchat .helm_deploy
