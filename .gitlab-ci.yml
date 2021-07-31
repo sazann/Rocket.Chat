@@ -21,9 +21,8 @@ build:
     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
     - docker rmi $(docker images -f "dangling=true" -q)
-    - docker rmi -f rocket-chat:$CI_PIPELINE_IID
-    - sleep 10
-  
+    - docker rmi -f $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    
 test:       
   tags:
     - docker
