@@ -1,6 +1,6 @@
 variables:
   DOCKER_HOST: "tcp://172.17.0.1:2375"
-  
+
 stages:
   - build
   - test_deploy
@@ -54,3 +54,4 @@ deployk8s:
   stage: deployk8s
   script:
     - helm install rocketchat .helm_deploy
+    
