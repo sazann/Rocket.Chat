@@ -10,8 +10,6 @@ stages:
 build:
   tags:
     - docker
-  services:
-    - docker:19.03.12-dind
   stage: build
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -49,9 +47,9 @@ test_html:
     - docker stop rocketchat
     - docker stop mongo
 
-deployk8s:
-  tags:
-    - shell
-  stage: deployk8s
-  script:
-    - helm upgrade --install rocketchat .helm_deploy
+# deployk8s:
+#   tags:
+#     - shell
+#   stage: deployk8s
+#   script:
+#     - helm upgrade --install rocketchat .helm_deploy
