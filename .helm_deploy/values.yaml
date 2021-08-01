@@ -34,12 +34,12 @@ grafana:
   name: grafana-prometheus-jk8gk
   port: 80
 #scr
-mongodb-root-password:123
-mongodb-password:5645
-mongodb-replica-set-key:53543
-mongo-uri:45354
-mongo-oplog-uri:5354
-mail-url:45345
+mongodb-root-password: 123
+mongodb-password: 5645
+mongodb-replica-set-key: 53543
+mongo-uri: 45354
+mongo-oplog-uri: 5354
+mail-url: 45345
 
 #docker images:
 containers:
