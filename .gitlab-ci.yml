@@ -5,7 +5,7 @@ stages:
   - build
   - test_deploy
   - test_html
-   - deployk8s
+  - deployk8s
 
 build:
   tags:
