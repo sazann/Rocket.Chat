@@ -52,4 +52,4 @@ deployk8s:
     - shell
   stage: deployk8s
   script:
-    - helm upgrade --install --set mongodb_root_password=$mongodb_root_password rocketchat .helm_deploy
+    - helm upgrade --install --set mongodb_root_password=$mongodb_root_password,mongodb_password=$mongodb_password,mongodb_replica_set_key=$mongodb_replica_set_key,mongo_uri=$mongo_uri,mongo_oplog_uri=$mongo_oplog_uri,mail_url=$mail_url rocketchat .helm_deploy
