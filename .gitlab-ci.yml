@@ -2,25 +2,25 @@ variables:
   DOCKER_HOST: "tcp://172.17.0.1:2375"
 
 stages:
-  - build
+  #- build
   # - test_deploy
   # - test_html
-  # - deployk8s
+   - deployk8s
 
-build:
-  tags:
-    - docker
-  stage: build
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t rocket-chat:$CI_PIPELINE_IID .
-    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-    - docker rmi $(docker images -f "dangling=true" -q)
-    - docker rmi -f rocket-chat:$CI_PIPELINE_IID
-    - docker rmi -f $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+# build:
+#   tags:
+#     - docker
+#   stage: build
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - docker build -t rocket-chat:$CI_PIPELINE_IID .
+#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+#     - docker rmi $(docker images -f "dangling=true" -q)
+#     - docker rmi -f rocket-chat:$CI_PIPELINE_IID
+#     - docker rmi -f $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
     
 # test:       
 #   tags:
@@ -47,9 +47,9 @@ build:
 #     - docker stop rocketchat
 #     - docker stop mongo
 
-# deployk8s:
-#   tags:
-#     - shell
-#   stage: deployk8s
-#   script:
-#     - helm upgrade --install rocketchat .helm_deploy
+deployk8s:
+  tags:
+    - shell
+  stage: deployk8s
+  script:
+    - helm upgrade --install rocketchat .helm_deploy
