@@ -1,6 +1,7 @@
 ![logo](./screenshots/logo.png )
 
-## **Exadel Internship project from NASA-team (Novogrodski Andrew & Sazonova Anna**)
+## **Exadel Internship project from NASA-team:**
+ ***Novogrodski Andrew & Sazonova Anna***
 
 ---
   Для реализации данного проекта была сделана ветка из официального репозитория [RocketChat](https://github.com/RocketChat/Rocket.Chat) и настроен web hook для интеграции с [GitLab репозиторием нашего проекта](https://gitlab.com/Andrew-Novogrodski/Rocket-Chat).
