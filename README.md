@@ -28,6 +28,30 @@
 Для стадий build и testing в  [Microsoft Azure](https://azure.microsoft.com/ru-ru/) создана VM (Standard D2as_v4 (2 vcpus, 8 GiB memory), Linux (ubuntu 20.04)) c дополнительным открытием в Networking-Inbound port rules-Add inbound security rule порта :3000.
 
 ---
+Устанавливаем docker:
+```
+sudo apt update -y
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+   
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update -y 
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+
+systemctl enable docker
+
+```
 Для работы с Gitlab (исполнение Jobs) на данной VM установлен 
 [GitLab Runner](https://docs.gitlab.com/runner/install/linux-manually.html).
 
@@ -60,31 +84,6 @@ sudo gitlab-runner register
 В Gitlab видим, что созданные раннеры активны:
 
 ![gitlab new project](./screenshots/runners.png)
-
-Так же необходимо установить docker:
-```
-sudo apt update -y
-
-sudo apt-get install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
-   
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-sudo apt update -y 
-
-sudo apt-get install docker-ce docker-ce-cli containerd.io -y
-
-systemctl enable docker
-
-```
 
 Для работы с Google Kubernetes Engine (GKE) устанавливаем:
 - [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-%D0%B4%D0%B2%D0%BE%D0%B8%D1%87%D0%BD%D0%BE%D0%B3%D0%BE-%D1%84%D0%B0%D0%B9%D0%BB%D0%B0-kubectl-%D1%81-%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E-curl-%D0%B2-linux)
@@ -365,6 +364,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
     kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml
     ```
 2. Пишем 2 манифеста для издателя сертификатов ClusterIssuer. Первый будет для тестов работы и будет называться *issuer-staging.yaml*, второй будет для продакшена *issuer-prod.yaml*
+
 Первый (*issuer-staging.yaml*):
 ```
 apiVersion: cert-manager.io/v1
@@ -445,5 +445,6 @@ spec:
                   number: <порт сервиса>
 ```
 5. Запускаем ingress манифест через kubectl или helm chart и получаем нужные сертификаты
+
 ---
 В наш репозиторий добавляем папку [.helm_deploy](.helm_deploy),наши файлы [Dockerfile](Dockerfile) и [Pipeline в файле .gitlab-ci.yml](.gitlab-ci.yml).
