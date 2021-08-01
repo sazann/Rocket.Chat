@@ -49,11 +49,11 @@ sudo gitlab-runner register
 
 ![gitlab new project](./screenshots/specific%20_runner.png)
 
-- для выполнения стадий build, testing (deploy and html) - c docker executor;
+- для выполнения стадий build, testing (deploy and html) - c docker executor:
   
   ![gitlab new project](./screenshots/runner_docker.png)
 
-- для выполнения стадий deployk8s - c shell executor.
+- для выполнения стадий deployk8s - c shell executor:
 
   ![gitlab new project](./screenshots/runner_shell.png)
 
@@ -320,7 +320,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 3) Написание [манифестов ingress](.helm_deploy/templates/nginx-ingress.yaml)
 
 ---
-## Настройка доменного имени и SSL сертификата
+ Настройка доменного имени и SSL сертификата
 
 - Регистрация доменного имени:
 1. Заходим на любой регистратор доменных имен (можно бесплатный), в проекте использован Domain.by) и проверяем доступность доменного имени;

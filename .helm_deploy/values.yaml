@@ -34,6 +34,14 @@ grafana:
   name: grafana-prometheus-jk8gk
   port: 80
 
+#secrets
+mongodb-root-password: 13256 
+mongodb-password: 5651
+mongodb-replica-set-key: 49845
+mongo-uri: 652652
+mongo-oplog-uri: 65165
+mail-url: 651651
+
 #docker images:
 containers:
   app_image: registry.rocket.chat/rocketchat/rocket.chat:latest
