@@ -2,50 +2,50 @@ variables:
   DOCKER_HOST: "tcp://172.17.0.1:2375"
 
 stages:
-  #- build
-  # - test_deploy
-  # - test_html
+  - build
+  - test_deploy
+  - test_html
    - deployk8s
 
-# build:
-#   tags:
-#     - docker
-#   stage: build
-#   script:
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#     - docker build -t rocket-chat:$CI_PIPELINE_IID .
-#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-#     - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
-#     - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
-#     - docker rmi $(docker images -f "dangling=true" -q)
-#     - docker rmi -f rocket-chat:$CI_PIPELINE_IID
-#     - docker rmi -f $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+build:
+  tags:
+    - docker
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t rocket-chat:$CI_PIPELINE_IID .
+    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    - docker tag rocket-chat:$CI_PIPELINE_IID $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
+    - docker push $CI_REGISTRY/andrew-novogrodski/rocket-chat:latest
+    - docker rmi $(docker images -f "dangling=true" -q)
+    - docker rmi -f rocket-chat:$CI_PIPELINE_IID
+    - docker rmi -f $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
     
-# test:       
-#   tags:
-#     - docker
-#   stage: test_deploy
-#   script:    
-#     - docker network create chat || true
-#     - docker run --rm -d --net chat --name mongo mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
-#     - sleep 10
-#     - echo "Enable DB rs.initiate..."     
-#     - docker cp rsinitiate.js mongo:rsinitiate.js
-#     - docker exec -i mongo mongo rsinitiate.js
-#     - docker run --rm -d -p3000:3000 -e MONGO_OPLOG_URL=mongodb://mongo:27017/local -e MONGO_URL=mongodb://mongo:27017/rocketchat --net chat --name rocketchat registry.gitlab.com/andrew-novogrodski/rocket-chat:latest 
+test:       
+  tags:
+    - docker
+  stage: test_deploy
+  script:    
+    - docker network create chat || true
+    - docker run --rm -d --net chat --name mongo mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
+    - sleep 10
+    - echo "Enable DB rs.initiate..."     
+    - docker cp rsinitiate.js mongo:rsinitiate.js
+    - docker exec -i mongo mongo rsinitiate.js
+    - docker run --rm -d -p3000:3000 -e MONGO_OPLOG_URL=mongodb://mongo:27017/local -e MONGO_URL=mongodb://mongo:27017/rocketchat --net chat --name rocketchat registry.gitlab.com/andrew-novogrodski/rocket-chat:latest 
 
-# test_html:       
-#   tags:
-#     - docker
-#   stage: test_html
-#   script:
-#     - sleep 15
-#     - apk add curl
-#     - sleep 30
-#     - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed successfully!"; else echo "Error!"; exit 1; fi;
-#     - docker stop rocketchat
-#     - docker stop mongo
+test_html:       
+  tags:
+    - docker
+  stage: test_html
+  script:
+    - sleep 15
+    - apk add curl
+    - sleep 30
+    - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed successfully!"; else echo "Error!"; exit 1; fi;
+    - docker stop rocketchat
+    - docker stop mongo
 
 deployk8s:
   tags:
