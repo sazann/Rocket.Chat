@@ -3,8 +3,8 @@ variables:
 
 stages:
   #- build
-  #- test_deploy
-  #- test_html
+  - test_deploy
+  - test_html
   - deployk8s
 
 # build:
@@ -22,30 +22,30 @@ stages:
 #     - docker rmi -f rocket-chat:$CI_PIPELINE_IID
 #     - docker rmi -f $CI_REGISTRY/andrew-novogrodski/rocket-chat:$CI_PIPELINE_IID
     
-# test:       
-#   tags:
-#     - docker
-#   stage: test_deploy
-#   script:    
-#     - docker network create chat || true
-#     - docker run --rm -d --net chat --name mongo mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
-#     - sleep 10
-#     - echo "Enable DB rs.initiate..."     
-#     - docker cp rsinitiate.js mongo:rsinitiate.js
-#     - docker exec -i mongo mongo rsinitiate.js
-#     - docker run --rm -d -p3000:3000 -e MONGO_OPLOG_URL=mongodb://mongo:27017/local -e MONGO_URL=mongodb://mongo:27017/rocketchat --net chat --name rocketchat registry.gitlab.com/andrew-novogrodski/rocket-chat:latest 
+test:       
+  tags:
+    - docker
+  stage: test_deploy
+  script:    
+    - docker network create chat || true
+    - docker run --rm -d --net chat --name mongo mongo:4.0 --smallfiles --replSet rs0 --oplogSize 128
+    - sleep 10
+    - echo "Enable DB rs.initiate..."     
+    - docker cp rsinitiate.js mongo:rsinitiate.js
+    - docker exec -i mongo mongo rsinitiate.js
+    - docker run --rm -d -p3000:3000 -e MONGO_OPLOG_URL=mongodb://mongo:27017/local -e MONGO_URL=mongodb://mongo:27017/rocketchat --net chat --name rocketchat registry.gitlab.com/andrew-novogrodski/rocket-chat:latest 
 
-# test_html:       
-#   tags:
-#     - docker
-#   stage: test_html
-#   script:
-#     - sleep 15
-#     - apk add curl
-#     - sleep 30
-#     - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed successfully!"; else echo "Error!"; exit 1; fi;
-#     - docker stop rocketchat
-#     - docker stop mongo
+test_html:       
+  tags:
+    - docker
+  stage: test_html
+  script:
+    - sleep 15
+    - apk add curl
+    - sleep 30
+    - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed successfully!"; else echo "Error!"; exit 1; fi;
+    - docker stop rocketchat
+    - docker stop mongo
 
 deployk8s:
   tags:
