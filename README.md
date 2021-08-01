@@ -146,12 +146,13 @@ rm .bash_logout
     
         Создать кластер можно также и средствами самого GitLab, что даже более удобно, так как потом не придется прописывать сертифит и токены.
 
-        Переходим во вкладку Infrastructure -> Kubernetes cluster -> Create new cluster
-        Далее нужно пройти валидацию и заполнить нужные характеристики (3 ноды n1-standard-2, zoзона ne us-central1-a. Характеристики 2 cpu 8 gb ram).
+        Переходим во вкладку Infrastructure-Kubernetes cluster-Create new cluster.
+
+        Далее нужно пройти валидацию и заполнить нужные характеристики (3 ноды n1-standard-2, зона us-central1-a. Характеристики: 2 cpu 8 gb ram).
 
     - Способ №3:
     
-        Создаем кластер в Google Cloud -> Kubernetes Engine -> Create - Standart Configure - Name - Выбираем Zone
+        Создаем кластер в Google Cloud-Kubernetes Engine-Create- Standart Configure-Name-Выбираем Zone
         Выбираем нужные характеристики (3 ноды n1-standard-2, zoзона ne us-central1-a. Характеристики 2 cpu 8 gb ram) и запускаем.
 
 ---
@@ -160,7 +161,7 @@ rm .bash_logout
 sudo -i -u gitlab-runner
 gcloud init 
 ```
-Переходим со сформированной ссылке, логинимся в наш Google-аккаунт и копируем верификационный ключ.
+Переходим по сформированной ссылке, логинимся в наш Google-аккаунт и копируем верификационный ключ.
  ![gitlab new project](./screenshots/cluster_init.png)
 
 Далее выбираем наш уже созданный кластер и после вставляем ссылку, скопированную из GCP:
@@ -176,8 +177,9 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 
 Helm repo update
 ```
-2. Создаем custom-values.yaml манифест, для дополнительных настроек стэка:
+2. Создаем custom-values.yaml манифест, для дополнительных настроек стэка и вводим команду:
 ```
+cat <<EOF > custom_values.yaml
 coreDns:
   enabled: false
 
@@ -209,17 +211,26 @@ prometheus:
 EOF
 ```
 
- и вводим команду:
-```
-cat <<EOF > custom_values.yaml
-```
-
 3. Устанавливаем стэк командой:
+```
 helm install grafana-prometheus \
   -n monitoring \
   -f custom_values.yaml \
   --version 17.0.3 \
   prometheus-community/kube-prometheus-stack
+```
+---
+Alerting:
+1. Заходим в Google cloud console
+2. Выбираем Monitoring -> Alerting
+3. Нажимаем Create policy -> Add condition
+4. Выбираем Target -> resourse type (например Kubernetes Node)
+5. Выбираем метрику (например CPU Usage) и выбираем во вкладке Configuration значения после которых сработает alert 
+6. Нажимаем ADD
+7. Выбираем способ оповещения (например emal), если не создан, то нажимаем manage и привязываем свою почту.
+8. В последнем пункте указываем alerts name и описание по возможным способам устранения проблемы
+9. Нажимаем Save 
+
 ---
  
 Система backup в проекте основана на создание GCS bucket и инструменте [Velero](https://github.com/vmware-tanzu/velero-plugin-for-gcp#Create-an-GCS-bucket).
@@ -295,8 +306,120 @@ helm install grafana-prometheus \
     velero restore create <имя restore> --from-backup <имя backup> #восстановление из backup
     velero create schedule <имя расписания>  --schedule=”@every ..” либо “* * * * *”
     ```
-
+---
+Настройка NGINX Ingress Controller:
+1. Добавление нужных ролей аккаунту:
+```
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole cluster-admin \
+  --user $(gcloud config get-value account)
+```
+2) Установка самого nginx ingress controller:
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.48.1/deploy/static/provider/cloud/deploy.yaml
+```
+3) Написание [манифестов ingress](.helm_deploy/templates/nginx-ingress.yaml)
 
 ---
-В наш репозиторий пушим наш [Dockerfile](Dockerfile) и наш 
-[Pipeline](.gitlab-ci.yml)
+## Настройка доменного имени и SSL сертификата
+
+- Регистрация доменного имени:
+1. Заходим на любой регистратор доменных имен (можно бесплатный), в проекте использован Domain.by) и проверяем доступность доменного имени;
+2. Регистрируем доменное имя;
+3. Заходим в Google Cloud;
+4. Заходим в VPC network -> IP addresses;
+5. Находим IP адрес нашего loadbalancer(он будет создан после установки ingress controller), и помечаем его, как Static IP;
+6. Переходим во вкладку Network Services -> Cloud DNS и включаем его API;
+7. Нажимаем Create Zone;
+8. Задаем имя и вводим зарегистрированное доменное имя -> Create
+9. Создаем  Запись типа A для нашего доменного имени и Запись типа CNAME с пометкой www.;
+10. Копируем адреса доменных серверов Google и вставляем их в меню DNS сервера нашего регистратора (в нашем случае это Domain.by)
+
+- Установка Cert-manager для SSL сертификата:
+1. Устанавливаем Cert-manager:
+    ```
+    kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml
+    ```
+2. Пишем 2 манифеста для издателя сертификатов ClusterIssuer. Первый будет для тестов работы и будет называться *issuer-staging.yaml*, второй будет для продакшена *issuer-prod.yaml*
+Первый (*issuer-staging.yaml*):
+```
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: nasaproject0208@gmail.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the ACME account's private key.
+      name: letsencrypt-staging-private-key
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+```
+
+Второй (*issuer-prod.yaml*):
+```
+apiVersion: cert-manager.io/v1
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: nasaproject0208@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the ACME account's private key.
+      name: letsencrypt-prod-private-key
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+```
+***Важно!*** Обязательно нужно ввести реальный email, что бы пройти валидацию.
+
+3. Запускаем их через команду 
+```
+kubectl apply –f
+```
+4. Прописываем в манифесте нашего ingress controller следующее:
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: <имя ингресс>
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: <letsencrypt-staging либо letsencrypt-prod>
+spec:
+  tls:
+  - hosts:
+    - <name1.example.com> # ввести свое доменное имя
+    - <name2.example.com> # ввести свое доменное имя
+    secretName: app-tls
+  rules:
+   - host: <example.com> # ввести свое доменное имя 
+     http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: <название сервиса>
+                port: 
+                  number: <порт сервиса>
+```
+5. Запускаем ingress манифест через kubectl или helm chart и получаем нужные сертификаты
+---
+В наш репозиторий добавляем папку [.helm_deploy](.helm_deploy),наши файлы [Dockerfile](Dockerfile) и [Pipeline в файле .gitlab-ci.yml](.gitlab-ci.yml).
