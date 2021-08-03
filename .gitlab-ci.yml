@@ -35,21 +35,21 @@ test:
     - docker exec -i mongo mongo rsinitiate.js
     - docker run --rm -d -p3000:3000 -e MONGO_OPLOG_URL=mongodb://mongo:27017/local -e MONGO_URL=mongodb://mongo:27017/rocketchat --net chat --name rocketchat registry.gitlab.com/andrew-novogrodski/rocket-chat:latest 
 
-test_html:       
-  tags:
-    - docker
-  stage: test_html
-  script:
-    - sleep 30
-    - apk add curl
-    - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed successfully!"; else echo "Error!"; exit 1; fi;
-    - docker stop rocketchat
-    - docker stop mongo
+# test_html:       
+#   tags:
+#     - docker
+#   stage: test_html
+#   script:
+#     - sleep 30
+#     - apk add curl
+#     - if [[ $(curl -s -o /dev/null -w "%{http_code}" http://20.55.33.255:3000) -eq 200 ]]; then echo "!Test passed successfully!"; else echo "Error!"; exit 1; fi;
+#     - docker stop rocketchat
+#     - docker stop mongo
 
 deployk8s:
   tags:
     - shell
   stage: deployk8s
   script:
-    - helm upgrade --install --description $CI_PIPELINE_IID --dry-run --set mongodb_root_password=$mongodb_root_password,mongodb_password=$mongodb_password,mongodb_replica_set_key=$mongodb_replica_set_key,mongo_uri=$mongo_uri,mongo_oplog_uri=$mongo_oplog_uri,mail_url=$mail_url rocketchat .helm_deploy
+    - helm upgrade --install --description $CI_PIPELINE_IID --set mongodb_root_password=$mongodb_root_password,mongodb_password=$mongodb_password,mongodb_replica_set_key=$mongodb_replica_set_key,mongo_uri=$mongo_uri,mongo_oplog_uri=$mongo_oplog_uri,mail_url=$mail_url rocketchat .helm_deploy
 
